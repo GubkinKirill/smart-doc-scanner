@@ -22,6 +22,20 @@ async def handle_start(message: types.Message):
 async def  handle_help(message: types.Message):
     await message.answer(text='Пришли мне фото документа и я сделаю тебе скан')
 
+
+@dp.message()
+async def handle_photo(message: types.Message):
+    if message.photo:
+        photo = message.photo[-1]
+        file = await message.bot.get_file(photo.file_id)
+        file_path = file.file_path
+
+        os.makedirs('uploads', exist_ok=True)
+        dest = f"uploads/{photo.file_id}.jpg"
+        await message.bot.download_file(file_path, dest)
+        await message.answer(text="Фото получено")
+
+
 async def main():
     logging.basicConfig(level=logging.INFO)
     bot = Bot(token=BOT_TOKEN)
